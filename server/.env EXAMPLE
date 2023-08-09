@@ -1,10 +1,7 @@
-#Port Server
-PORT=3000
-
 #DB configuration
 DB_TYPE=mysql
 DB_HOST=localhost
 DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=
+DB_USER=mi_usuario
+DB_PASSWORD=secret
 DB_NAME=lssn
