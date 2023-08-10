@@ -5,3 +5,10 @@ DB_PORT=3306
 DB_USER=mi_usuario
 DB_PASSWORD=secret
 DB_NAME=lssn
+
+#Linkedin configuration
+LINKEDIN_CLIENT_ID=<your_client_id>
+LINKEDIN_CLIENT_SECRET=<your_client_secret>
+LINKEDIN_ACCESS_TOKEN=<your_access_token>
+LINKEDIN_SCOPES=<scope1>%20<scope2>%20<scope...> #for example openid%20profile
+    

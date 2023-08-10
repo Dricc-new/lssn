@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthlinkedinModule } from './authlinkedin/authlinkedin.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -19,6 +20,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       autoLoadEntities: true,
       synchronize: true,
     })
-  }), AuthModule],
+  }), AuthModule, AuthlinkedinModule],
 })
 export class AppModule { }
