@@ -1,29 +1,30 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { AuthlinkedinService } from './authlinkedin.service';
 import { ConfigService } from '@nestjs/config';
+import { AuthLinkedinInitDTO } from './dto/AuthLinkedinInit-dto';
 
-@Controller('authlinkedin')
+@Controller('auth/linkedin')
 export class AuthlinkedinController {
     constructor(private authLinkedin: AuthlinkedinService, private env: ConfigService) { }
 
-    @Get()
-    async auth() {
+    @Get(':action')
+    async auth(@Param() params: any ) {
         return {
             url: 'https://www.linkedin.com/oauth/v2/authorization',
             response_type: 'code',
             client_id: this.env.get('LINKEDIN_CLIENT_ID'),
-            state: 'keygenerated',
+            state: params.action,
             scope: this.env.get('LINKEDIN_SCOPES')
         }
     }
 
-    @Post('/register')
-    async register() {
+    @Post()
+    async init(@Body() request: AuthLinkedinInitDTO) {
+        if(request.state == 'register'){
 
+        }else if(request.state == 'login'){
+
+        }else return
     }
 
-    @Post('/login')
-    async login() {
-
-    }
 }
