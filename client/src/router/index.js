@@ -19,6 +19,10 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: import('../views/Dashboard.vue')
+    },{
+      path: '/callback',
+      name: 'callback',
+      component: import('../views/callback.vue')
     }
   ]
 })
