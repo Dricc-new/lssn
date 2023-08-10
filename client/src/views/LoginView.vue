@@ -1,3 +1,6 @@
+<script setup>
+import {RouterLink} from 'vue-router'
+</script>
 <template>
     <section class="flex flex-col justify-center p-4">
         <div class="bg-stone-200 rounded p-4 flex flex-col gap-2">
@@ -6,5 +9,6 @@
                 <i class="fab fa-linkedin text-2xl"></i>Continue with Linkedin
             </a>
         </div>
+        <RouterLink to="/register" class="mt-2 text-sky-500">I don't have an account, create one.</RouterLink> 
     </section>
 </template>
