@@ -1,3 +1,5 @@
+<script setup>
+</script>
 <template>
     <section class="flex flex-col justify-center p-4">
         <div class="bg-stone-200 rounded p-4 flex flex-col gap-2">
