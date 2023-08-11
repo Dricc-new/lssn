@@ -10,27 +10,30 @@ export class OAuth2LinkedinService {
     constructor(private env: ConfigService,
         private readonly httpService: HttpService) { }
 
+    // Mas adelante añadir esta capa de seguridad
     private encoder(str: string): string {
         return str
     }
 
+    // Mas adelante añadir esta capa de seguridad
     private decode(code: string): string {
         return code
     }
 
     // return link to linkedin
-    getLink() {
+    getLink(action: string) {
         return 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' +
             this.env.get('LINKEDIN_CLIENT_ID') +
             '&redirect_uri=' + this.env.get('LINKEDIN_CALLBACK') +
-            '&state=' + this.encoder('key') +
+            '&state=' + this.encoder(action) +
             '&scope=' + this.env.get('LINKEDIN_SCOPES')
     }
 
     // validate the state and if everything is ok return the action of this state
     stateValidate(state: string) {
         const action = this.decode(state)
-        return true
+        if (!action) throw new InternalServerErrorException()
+        return action
     }
 
     // request the accessToken to linkedin
@@ -52,13 +55,13 @@ export class OAuth2LinkedinService {
     }
 
     // get linkedin user profile
-    async getProfile(accessToken: string){
-        try{
+    async getProfile(accessToken: string) {
+        try {
             const res: AxiosResponse<UserInfoLinkedinDTO> = await this.httpService.axiosRef.get('https://api.linkedin.com/v2/userinfo', {
                 headers: { Authorization: `Bearer ${accessToken}` }
             })
             return res.data
-        }catch(e){
+        } catch (e) {
             throw new InternalServerErrorException()
         }
     }

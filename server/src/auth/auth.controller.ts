@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Param, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
 import { LoginUserDTO } from './dto/login-user.dto';
@@ -21,28 +21,39 @@ export class AuthController {
     }
 
     // Returns a route to authenticate with linkedin
-    @Get('/oauth2/linkedin')
-    getOAuth2Linkedin() {
-        return this.oauth2LinkedinService.getLink()
+    @Get('/oauth2/linkedin/:action')
+    getOAuth2Linkedin(@Param() params: { action: string }) {
+        return this.oauth2LinkedinService.getLink(params.action)
     }
-
 
     @Post('/oauth2/linkedin')
     async OAuth2Linkedin(@Body() request: AccessTokenDTO) {
         try {
-            this.oauth2LinkedinService.stateValidate(request.state)
+            const action = this.oauth2LinkedinService.stateValidate(request.state)
+            
             const resToken = await this.oauth2LinkedinService.getAccessToken(request.code)
             const profile = await this.oauth2LinkedinService.getProfile(resToken.access_token)
             const user = await this.authService.getUser(profile.email)
-            if (user) {
-                return await this.authService.loginUserWithStrategy(user)
-            } else {
-                const newUser = { name: profile.name, email: profile.email, password: 'Qwe123asd' }
+            if (action == 'register') {
+                // Verified that the user does not exist
+                if (user) throw new ConflictException('The email already exists in our database.')
+
+                // Register user and login
+                const newUser = { name: profile.name, email: profile.email, password: this.authService.passwordGenerate() }
                 const rUser = await this.authService.registerUserWithStrategy(newUser, resToken)
                 return await this.authService.loginUserWithStrategy(rUser)
+            } else if (action == 'login') {
+
+                // Verified that the user exist
+                if (!user) throw new ConflictException('The email does not exist in our database.')
+                
+                // Start user session
+                return await this.authService.loginUserWithStrategy(user)
+            } else{
+                throw new ConflictException('The email already exists in our database.')
             }
         } catch (err) {
-            return 'error'
+            return err
         }
     }
 
