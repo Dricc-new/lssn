@@ -1,4 +1,4 @@
-export class AuthLinkedinInitDTO {
+export class AccessTokenDTO {
     code: string
     state: string
 }

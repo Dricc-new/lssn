@@ -6,7 +6,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [HttpModule, AuthModule,ConfigModule],
+    imports: [HttpModule, AuthModule, ConfigModule],
     controllers: [AuthlinkedinController],
     providers: [AuthlinkedinService]
 })
