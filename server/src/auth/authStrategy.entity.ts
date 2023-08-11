@@ -1,14 +1,15 @@
+import { User } from "src/auth/user.entity";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class AccessToken {
+export class AuthStrategy {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({ length: 1000, unique: true })
+    @Column({ type: 'text' })
     access_token: string
 
-    @Column({  unique: true })
+    @Column({ unique: true })
     expires_in: number
 
     @Column({ length: 100 })

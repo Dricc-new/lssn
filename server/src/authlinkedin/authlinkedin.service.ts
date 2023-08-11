@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { HttpService } from '@nestjs/axios'
 import { AxiosResponse } from 'axios'
 import { ConfigService } from '@nestjs/config';
-import { Observable } from 'rxjs';
 import { AccessTokenResponseDTO } from './dto/AccessTokenResponse-dto';
+import { UserInfoDTO } from './dto/UserInfo.dto';
 
 @Injectable()
 export class AuthlinkedinService {
-    constructor(private authService: AuthService,
+    constructor(
+        private authService: AuthService,
         private readonly httpService: HttpService,
         private env: ConfigService) { }
     // Luego********************************************************
@@ -32,17 +33,20 @@ export class AuthlinkedinService {
             }, {
                 headers: { 'content-type': 'application/x-www-form-urlencoded' }
             })
-            console.log(res)
+            return res.data
         } catch (err) {
-            console.log(err)
+            throw new InternalServerErrorException()
         }
     }
-
-    async register(code: string) {
-
-    }
-
-    async login() {
-
+    
+    async getProfile(accessToken: string){
+        try{
+            const res: AxiosResponse<UserInfoDTO> = await this.httpService.axiosRef.get('https://api.linkedin.com/v2/userinfo', {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            })
+            return res.data
+        }catch(e){
+            throw new InternalServerErrorException()
+        }
     }
 }

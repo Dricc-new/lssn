@@ -7,11 +7,14 @@ import { EncoderService } from './encoder.service';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
+import { AuthStrategy } from './authStrategy.entity';
+import { AuthStrategyDTO } from './dto/authStrategy.dto';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
+        @InjectRepository(AuthStrategy) private authStrategyRepository: Repository<AuthStrategy>,
         private encoderService: EncoderService,
         private jwtService: JwtService) { }
 
@@ -25,13 +28,25 @@ export class AuthService {
             //if all ok return the user
             return user
         }).catch((e) => {
-            console.log(e)
             //else return a error
             if (e.code === 'ER_DUP_ENTRY') {
-                throw new ConflictException('The username or email already exists in our database.')
+                throw new ConflictException('The email already exists in our database.')
             }
             throw new InternalServerErrorException()
         })
+    }
+
+    async registerUserWithStrategy(user: RegisterUserDTO, strategy: AuthStrategyDTO) {
+        try {
+            const newUser: User = await this.registerUser(user)
+            const newStrategy = this.authStrategyRepository.create(strategy)
+            const saveProfile = await this.authStrategyRepository.save(newStrategy)
+            newUser.authStrategy = saveProfile
+            const saveUser = await this.userRepository.save(newUser)
+            return saveUser
+        } catch (e) {
+            throw new InternalServerErrorException()
+        }
     }
 
     async login(loginUser: LoginUserDTO): Promise<{ accessToken: string }> {
@@ -42,7 +57,7 @@ export class AuthService {
 
         //if the user exists and the password is correct, return the account; otherwise return an error
         if (user && (await this.encoderService.checkPassword(password, user.password))) {
-            const payload: JwtPayload = { id: user.id, email: user.email}
+            const payload: JwtPayload = { id: user.id, email: user.email }
             const accessToken = this.jwtService.sign(payload)
             return { accessToken }
         } else {

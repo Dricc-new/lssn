@@ -7,6 +7,7 @@ import { EncoderService } from './encoder.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { AuthStrategy } from './authStrategy.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { JwtStrategy } from './jwt.strategy';
         expiresIn: 3600,
       }
     }),
-    TypeOrmModule.forFeature([User])
+    TypeOrmModule.forFeature([User,AuthStrategy])
   ],
   controllers: [AuthController],
   providers: [AuthService, EncoderService, JwtStrategy],

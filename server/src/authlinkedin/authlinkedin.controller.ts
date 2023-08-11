@@ -22,8 +22,14 @@ export class AuthlinkedinController {
     async accessToken(@Body() request: AccessTokenDTO) {
         // Mas adelante para añadir capa de seguridad
         const state = await this.authLinkedin.decoder(request.state)
-        console.log(state)
-        this.authLinkedin.accessToken(request.code)
+        const res = await this.authLinkedin.accessToken(request.code)
+        const accessToken = res.access_token
+        console.log(accessToken)
+
     }
 
+    @Get('/profile/:token')
+    async getProfile(@Param() params: any) {
+        return await this.authLinkedin.getProfile(params.token)
+    }
 }
