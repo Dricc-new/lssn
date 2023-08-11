@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { AccessTokenResponseDTO } from './dto/AccessTokenResponse-dto';
@@ -32,7 +32,7 @@ export class OAuth2LinkedinService {
     // validate the state and if everything is ok return the action of this state
     stateValidate(state: string) {
         const action = this.decode(state)
-        if (!action) throw new InternalServerErrorException()
+        if (!action) throw new ConflictException('The page has expired, please try again.')
         return action
     }
 
