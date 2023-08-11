@@ -1,28 +1,40 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
-import { HttpService } from '@nestjs/axios'
-import { AxiosResponse } from 'axios'
 import { ConfigService } from '@nestjs/config';
+import { AxiosResponse } from 'axios';
 import { AccessTokenResponseDTO } from './dto/AccessTokenResponse-dto';
-import { UserInfoDTO } from './dto/UserInfo.dto';
+import { HttpService } from '@nestjs/axios';
+import { UserInfoLinkedinDTO } from './dto/UserInfoLinkedin.dto';
 
 @Injectable()
-export class AuthlinkedinService {
-    constructor(
-        private authService: AuthService,
-        private readonly httpService: HttpService,
-        private env: ConfigService) { }
-    // Luego********************************************************
-    async encoder(str: string): Promise<string> {
+export class OAuth2LinkedinService {
+    constructor(private env: ConfigService,
+        private readonly httpService: HttpService) { }
+
+    private encoder(str: string): string {
         return str
     }
 
-    // Luego********************************************************
-    async decoder(code: string): Promise<string> {
+    private decode(code: string): string {
         return code
     }
 
-    async accessToken(code: string) {
+    // return link to linkedin
+    getLink() {
+        return 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' +
+            this.env.get('LINKEDIN_CLIENT_ID') +
+            '&redirect_uri=' + this.env.get('LINKEDIN_CALLBACK') +
+            '&state=' + this.encoder('key') +
+            '&scope=' + this.env.get('LINKEDIN_SCOPES')
+    }
+
+    // validate the state and if everything is ok return the action of this state
+    stateValidate(state: string) {
+        const action = this.decode(state)
+        return true
+    }
+
+    // request the accessToken to linkedin
+    async getAccessToken(code: string) {
         try {
             const res: AxiosResponse<AccessTokenResponseDTO> = await this.httpService.axiosRef.post('https://www.linkedin.com/oauth/v2/accessToken', {
                 code: code,
@@ -38,10 +50,11 @@ export class AuthlinkedinService {
             throw new InternalServerErrorException()
         }
     }
-    
+
+    // get linkedin user profile
     async getProfile(accessToken: string){
         try{
-            const res: AxiosResponse<UserInfoDTO> = await this.httpService.axiosRef.get('https://api.linkedin.com/v2/userinfo', {
+            const res: AxiosResponse<UserInfoLinkedinDTO> = await this.httpService.axiosRef.get('https://api.linkedin.com/v2/userinfo', {
                 headers: { Authorization: `Bearer ${accessToken}` }
             })
             return res.data

@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthStrategy } from './authStrategy.entity';
+import { OAuth2LinkedinService } from './oauth2-linkedin.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -18,10 +20,11 @@ import { AuthStrategy } from './authStrategy.entity';
         expiresIn: 3600,
       }
     }),
-    TypeOrmModule.forFeature([User,AuthStrategy])
+    TypeOrmModule.forFeature([User, AuthStrategy]),
+    HttpModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, EncoderService, JwtStrategy],
+  providers: [AuthService, EncoderService, JwtStrategy, OAuth2LinkedinService],
   exports: [JwtStrategy, PassportModule, AuthService]
 })
 export class AuthModule { }

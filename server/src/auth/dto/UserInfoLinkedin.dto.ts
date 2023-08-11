@@ -1,4 +1,4 @@
-export class UserInfoDTO {
+export class UserInfoLinkedinDTO {
     sub: string
     name: string
     given_name: string

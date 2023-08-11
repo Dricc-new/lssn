@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { AuthStrategy } from './authStrategy.entity';
 import { AuthStrategyDTO } from './dto/authStrategy.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -36,19 +37,6 @@ export class AuthService {
         })
     }
 
-    async registerUserWithStrategy(user: RegisterUserDTO, strategy: AuthStrategyDTO) {
-        try {
-            const newUser: User = await this.registerUser(user)
-            const newStrategy = this.authStrategyRepository.create(strategy)
-            const saveProfile = await this.authStrategyRepository.save(newStrategy)
-            newUser.authStrategy = saveProfile
-            const saveUser = await this.userRepository.save(newUser)
-            return saveUser
-        } catch (e) {
-            throw new InternalServerErrorException()
-        }
-    }
-
     async login(loginUser: LoginUserDTO): Promise<{ accessToken: string }> {
         const { email, password } = loginUser
 
@@ -63,5 +51,28 @@ export class AuthService {
         } else {
             throw new UnauthorizedException('The wrong email or password')
         }
+    }
+
+    async registerUserWithStrategy(user: RegisterUserDTO, strategy: AuthStrategyDTO) {
+        try {
+            const newUser: User = await this.registerUser(user)
+            const newStrategy = this.authStrategyRepository.create(strategy)
+            const saveStrategy = await this.authStrategyRepository.save(newStrategy)
+            newUser.authStrategy = saveStrategy
+            const saveUser = await this.userRepository.save(newUser)
+            return saveUser
+        } catch (e) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async loginUserWithStrategy(user: User): Promise<{ accessToken: string }> {
+        const payload: JwtPayload = { id: user.id, email: user.email }
+        const accessToken = this.jwtService.sign(payload)
+        return { accessToken }
+    }
+
+    getUser(email: string) {
+        return this.userRepository.findOneBy({ email: email })
     }
 }

@@ -16,6 +16,6 @@ export class User {
     password: string
 
     @OneToOne(() => AuthStrategy, { nullable: true })
-    @JoinColumn()
+    @JoinColumn({ name: 'id' })
     authStrategy: AuthStrategy
 }
