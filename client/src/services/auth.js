@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 export async function redirectLinkedinAuth(action) {
     try {
         const res = await axiosInstance.get('/auth/oauth2/linkedin')
-        window.location.href = res
+        window.location.href = res.data
     } catch (err) {
         console.log(err)
     }

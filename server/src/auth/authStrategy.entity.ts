@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./user.entity";
 
 @Entity()
 export class AuthStrategy {
@@ -13,4 +14,8 @@ export class AuthStrategy {
 
     @Column({ length: 100 })
     scope: string
+
+    @OneToOne(() => User)
+    @JoinColumn({ name: 'user_id' })
+    user: User
 }

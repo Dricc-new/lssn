@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { AuthStrategy } from './authStrategy.entity';
 import { AuthStrategyDTO } from './dto/authStrategy.dto';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -57,10 +56,9 @@ export class AuthService {
         try {
             const newUser: User = await this.registerUser(user)
             const newStrategy = this.authStrategyRepository.create(strategy)
-            const saveStrategy = await this.authStrategyRepository.save(newStrategy)
-            newUser.authStrategy = saveStrategy
-            const saveUser = await this.userRepository.save(newUser)
-            return saveUser
+            newStrategy.user = newUser
+            await this.authStrategyRepository.save(newStrategy)
+            return newUser
         } catch (e) {
             throw new InternalServerErrorException()
         }
