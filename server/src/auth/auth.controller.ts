@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, Param, Post, UseGuards , Request} from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Param, Post, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
 import { LoginUserDTO } from './dto/login-user.dto';
@@ -31,7 +31,7 @@ export class AuthController {
     async OAuth2Linkedin(@Body() request: AccessTokenDTO) {
         try {
             const action = this.oauth2LinkedinService.stateValidate(request.state)
-            
+
             const resToken = await this.oauth2LinkedinService.getAccessToken(request.code)
             const profile = await this.oauth2LinkedinService.getProfile(resToken.access_token)
             const user = await this.authService.getUser(profile.email)
@@ -47,10 +47,10 @@ export class AuthController {
 
                 // Verified that the user exist
                 if (!user) throw new ConflictException('The email does not exist in our database.')
-                
+
                 // Start user session
                 return await this.authService.loginUserWithStrategy(user)
-            } else{
+            } else {
                 throw new ConflictException('The email already exists in our database.')
             }
         } catch (err) {
@@ -60,7 +60,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Post('/profile')
-    getProfile(@Request() req:any){
-        return req
+    async getProfile(@Request() req: any) {
+        return await this.oauth2LinkedinService.getProfile(req.user.authStrategy.access_token)
     }
 }

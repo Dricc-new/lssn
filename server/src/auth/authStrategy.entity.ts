@@ -15,7 +15,7 @@ export class AuthStrategy {
     @Column({ length: 100 })
     scope: string
 
-    @OneToOne(() => User)
-    @JoinColumn({ name: 'user_id' })
+    @OneToOne(() => User, (user) => user.authStrategy)
+    @JoinColumn({ name: 'user_id'})
     user: User
 }

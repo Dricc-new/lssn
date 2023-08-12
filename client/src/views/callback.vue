@@ -1,33 +1,38 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { Authenticate } from '../services/auth'
+import { Authenticate, getProfile } from '../services/auth'
 import { onMounted, ref } from 'vue';
+import { useAuthStore } from '../stores/auth.store';
 
 const req = useRoute().query
 const router = useRouter()
 const err = ref('')
+const auth = useAuthStore()
 onMounted(async () => {
-    if (req.code) {
-        const res = await Authenticate(req)
-        if (res.data.accessToken) {
-            sessionStorage.accessToken = res.data.accessToken
-            router.push('/dashboard')
-        } else switch(res.data.status) {
-            case 500: {
-                router.push('/500')
-                break;
-            }
-            case 404: {
-                router.push('/404')
-                break;
-            }
-            case 409: {
-                err.value = res.data.message
-                break;
+    try {
+        if (req.code) {
+            const res = await Authenticate(req)
+            if (res.data.accessToken) {
+                auth.accessToken = sessionStorage.accessToken = res.data.accessToken
+                auth.user = (await getProfile()).data
+                router.push('/dashboard')
+            } else switch (res.data.status) {
+                case 500: {
+                    router.push('/500')
+                    break;
+                }
+                case 404: {
+                    router.push('/404')
+                    break;
+                }
+                default: {
+                    err.value = res.data.message
+                    break;
+                }
             }
         }
-    } else {
-        // router.push('/')
+    } catch (err) {
+        console.log(err)
     }
 })
 </script>

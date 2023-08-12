@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { AuthStrategy } from './authStrategy.entity';
 import { AuthStrategyDTO } from './dto/authStrategy.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
         @InjectRepository(User) private userRepository: Repository<User>,
         @InjectRepository(AuthStrategy) private authStrategyRepository: Repository<AuthStrategy>,
         private encoderService: EncoderService,
+        private env: ConfigService,
         private jwtService: JwtService) { }
 
     async registerUser(user: RegisterUserDTO) {
@@ -72,6 +74,11 @@ export class AuthService {
 
     getUser(email: string) {
         return this.userRepository.findOneBy({ email: email })
+    }
+
+    async getOAuthAccessToken(user: User) {
+        const authStrategy = await this.authStrategyRepository.findOneBy({ user: user })
+        console.log(authStrategy)
     }
 
     // generate a random password

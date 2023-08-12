@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router';
 import { redirectLinkedinAuth } from '../services/auth';
 
 </script>
@@ -11,6 +12,6 @@ import { redirectLinkedinAuth } from '../services/auth';
                 <i class="fab fa-linkedin text-2xl"></i>Sign up with Linkedin
             </button>
         </div>
-        <RouterLink to="/register" class="mt-2 text-sky-500">I have an account, sign in.</RouterLink>
+        <RouterLink to="/login" class="mt-2 text-sky-500">I have an account, sign in.</RouterLink>
     </section>
 </template>

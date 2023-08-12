@@ -62,6 +62,7 @@ export class OAuth2LinkedinService {
             })
             return res.data
         } catch (e) {
+            console.log(e)
             throw new InternalServerErrorException()
         }
     }

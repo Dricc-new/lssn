@@ -1,10 +1,10 @@
 import axios from "axios";
+import { useAuthStore } from "../stores/auth.store";
+
+const auth = useAuthStore()
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:3000',
-    headers: {
-        'Content-Type': 'application/json'
-    }
 })
 
 // redirect to linkedin to authenticate
@@ -17,5 +17,12 @@ export async function redirectLinkedinAuth(action) {
     }
 }
 
-export const Authenticate = async (req) => await axiosInstance.post('/auth/oauth2/linkedin', req)
+export const Authenticate = async (req) => await axiosInstance.post('/auth/oauth2/linkedin', req, {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
 
+export const getProfile = async () => await axiosInstance.post('/auth/profile', null, {
+    headers: { Authorization: `Bearer ${auth.accessToken}` }
+})
