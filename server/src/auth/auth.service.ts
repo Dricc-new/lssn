@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { AuthStrategy } from './authStrategy.entity';
 import { AuthStrategyDTO } from './dto/authStrategy.dto';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +16,6 @@ export class AuthService {
         @InjectRepository(User) private userRepository: Repository<User>,
         @InjectRepository(AuthStrategy) private authStrategyRepository: Repository<AuthStrategy>,
         private encoderService: EncoderService,
-        private env: ConfigService,
         private jwtService: JwtService) { }
 
     async registerUser(user: RegisterUserDTO) {
@@ -76,12 +74,18 @@ export class AuthService {
         }
     }
 
+    // Login with linkedin
     async loginUserWithStrategy(user: User, strategy: AuthStrategyDTO): Promise<{ accessToken: string }> {
         // update Strategy
         const { access_token, scope } = strategy
         const date = new Date
         date.setSeconds(strategy.expires_in)
-        this.authStrategyRepository.update({ user: user }, { access_token, scope, expires_in: date })
+        
+        try {
+            await this.authStrategyRepository.update({ user: user }, { access_token, scope, expires_in: date })
+        } catch (e) {
+            throw new InternalServerErrorException()
+        }
 
         // return access token
         const payload: JwtPayload = { id: user.id, email: user.email }
@@ -91,11 +95,6 @@ export class AuthService {
 
     getUser(email: string) {
         return this.userRepository.findOneBy({ email: email })
-    }
-
-    async getOAuthAccessToken(user: User) {
-        const authStrategy = await this.authStrategyRepository.findOneBy({ user: user })
-        console.log(authStrategy)
     }
 
     // generate a random password

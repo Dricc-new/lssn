@@ -32,8 +32,8 @@ onMounted(async () => {
                 }
             }
         }
-    } catch (err) {
-        console.log(err)
+    } catch (e) {
+        err.value = e
     }
 })
 </script>

@@ -10,12 +10,14 @@ import { JwtStrategy } from './jwt.strategy';
 import { AuthStrategy } from './authStrategy.entity';
 import { OAuth2LinkedinService } from './oauth2-linkedin.service';
 import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'super-secret',
+      secret: process.env.KEY_SECRET,
       signOptions: {
         expiresIn: 3600,
       }

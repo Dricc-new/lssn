@@ -23,15 +23,15 @@ export class AuthController {
 
     // Returns a route to authenticate with linkedin
     @Get('/oauth2/linkedin/:action')
-    getOAuth2Linkedin(@Param() params: { action: string }) {
-        return this.oauth2LinkedinService.getLink(params.action)
+    async getOAuth2Linkedin(@Param() params: { action: string }) {
+        return await this.oauth2LinkedinService.getLink(params.action)
     }
 
     @Post('/oauth2/linkedin')
     async OAuth2Linkedin(@Body() request: AccessTokenDTO) {
         try {
             // capa de seguridad
-            const action = this.oauth2LinkedinService.stateValidate(request.state)
+            const action = await this.oauth2LinkedinService.stateValidate(request.state)
 
             const resToken = await this.oauth2LinkedinService.getAccessToken(request.code)
             const profile = await this.oauth2LinkedinService.getProfile(resToken.access_token)
@@ -39,17 +39,18 @@ export class AuthController {
             if (action == 'register') {
                 // Verified that the user does not exist
                 if (user) throw new ConflictException('The email already exists in our database.')
-
+                
                 // Register user
                 const newUser = { name: profile.name, email: profile.email, password: this.authService.passwordGenerate(), useAuthStrategy: 'linkedin' }
                 return await this.authService.registerUserWithStrategy(newUser, resToken)
             } else if (action == 'login') {
+
                 // Verified that the user exist
                 if (!user) throw new ConflictException('The email does not exist in our database.')
-
+                
                 // Verified startegy
                 if (user.useAuthStrategy != 'linkedin') throw new ConflictException('We are sorry, but this linkedin account is not found in our database  ')
-
+                
                 // Start user session
                 return await this.authService.loginUserWithStrategy(user, resToken)
             } else {

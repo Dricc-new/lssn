@@ -4,6 +4,7 @@ import { AxiosResponse } from 'axios';
 import { AccessTokenResponseDTO } from './dto/AccessTokenResponse-dto';
 import { HttpService } from '@nestjs/axios';
 import { UserInfoLinkedinDTO } from './dto/UserInfoLinkedin.dto';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class OAuth2LinkedinService {
@@ -11,27 +12,30 @@ export class OAuth2LinkedinService {
         private readonly httpService: HttpService) { }
 
     // Mas adelante añadir esta capa de seguridad
-    private encoder(str: string): string {
-        return str
+    private async encoder(str: string): Promise<string> {
+        const salt = await bcrypt.genSalt()
+        return await bcrypt.hash(str, salt)
     }
 
     // Mas adelante añadir esta capa de seguridad
-    private decode(code: string): string {
-        return code
+    private async decode(code: string): Promise<string> {
+        if (await bcrypt.compare('login', code)) return 'login'
+        else if(await bcrypt.compare('register', code)) return 'register'
+        else return ''
     }
 
     // return link to linkedin
-    getLink(action: string) {
+    async getLink(action: string) {
         return 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' +
             this.env.get('LINKEDIN_CLIENT_ID') +
             '&redirect_uri=' + this.env.get('LINKEDIN_CALLBACK') +
-            '&state=' + this.encoder(action) +
+            '&state=' + await this.encoder(action) +
             '&scope=' + this.env.get('LINKEDIN_SCOPES')
     }
 
     // validate the state and if everything is ok return the action of this state
-    stateValidate(state: string) {
-        const action = this.decode(state)
+    async stateValidate(state: string) {
+        const action = await this.decode(state)
         if (!action) throw new ConflictException('The page has expired, please try again.')
         return action
     }
@@ -62,7 +66,6 @@ export class OAuth2LinkedinService {
             })
             return res.data
         } catch (e) {
-            console.log(e)
             throw new InternalServerErrorException()
         }
     }
