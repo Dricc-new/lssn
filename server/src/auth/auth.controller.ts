@@ -1,9 +1,10 @@
-import { Body, ConflictException, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Param, Post, UseGuards , Request} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/register-user.dto';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { OAuth2LinkedinService } from './oauth2-linkedin.service';
 import { AccessTokenDTO } from './dto/AccessToken-dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -57,4 +58,9 @@ export class AuthController {
         }
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Post('/profile')
+    getProfile(@Request() req:any){
+        return req
+    }
 }
