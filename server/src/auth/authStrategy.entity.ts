@@ -9,13 +9,13 @@ export class AuthStrategy {
     @Column({ type: 'text' })
     access_token: string
 
-    @Column({ type: 'int' })
-    expires_in: number
+    @Column({ type: 'timestamp' })
+    expires_in: Date
 
     @Column({ length: 100 })
     scope: string
 
     @OneToOne(() => User, (user) => user.authStrategy)
-    @JoinColumn({ name: 'user_id'})
+    @JoinColumn({ name: 'user_id' })
     user: User
 }

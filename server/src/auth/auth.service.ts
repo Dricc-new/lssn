@@ -56,17 +56,38 @@ export class AuthService {
 
     async registerUserWithStrategy(user: RegisterUserDTO, strategy: AuthStrategyDTO) {
         try {
+            // register user
             const newUser: User = await this.registerUser(user)
-            const newStrategy = this.authStrategyRepository.create(strategy)
+
+            // create a new strategy
+            const { access_token, scope } = strategy
+            const date = new Date
+            date.setSeconds(strategy.expires_in)
+            const newStrategy = this.authStrategyRepository.create({ access_token, scope, expires_in: date })
             newStrategy.user = newUser
             await this.authStrategyRepository.save(newStrategy)
-            return newUser
+
+            // return a accessToken
+            const payload: JwtPayload = { id: newUser.id, email: newUser.email }
+            const accessToken = this.jwtService.sign(payload)
+            return { accessToken }
         } catch (e) {
             throw new InternalServerErrorException()
         }
     }
 
-    async loginUserWithStrategy(user: User): Promise<{ accessToken: string }> {
+    async test() {
+        const user = await this.getUser('diegoramoncc17@gmail.com')
+        const auth = await this.authStrategyRepository.findOneBy({ user: user })
+        return auth
+    }
+
+    async loginUserWithStrategy(user: User, strategy: AuthStrategyDTO): Promise<{ accessToken: string }> {
+        const { access_token, scope } = strategy
+        const date = new Date
+        date.setSeconds(strategy.expires_in)
+        this.authStrategyRepository.update({ user: user }, { access_token, scope, expires_in: date })
+
         const payload: JwtPayload = { id: user.id, email: user.email }
         const accessToken = this.jwtService.sign(payload)
         return { accessToken }

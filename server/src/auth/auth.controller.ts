@@ -39,17 +39,16 @@ export class AuthController {
                 // Verified that the user does not exist
                 if (user) throw new ConflictException('The email already exists in our database.')
 
-                // Register user and login
+                // Register user
                 const newUser = { name: profile.name, email: profile.email, password: this.authService.passwordGenerate() }
-                const rUser = await this.authService.registerUserWithStrategy(newUser, resToken)
-                return await this.authService.loginUserWithStrategy(rUser)
+                return await this.authService.registerUserWithStrategy(newUser, resToken)
             } else if (action == 'login') {
 
                 // Verified that the user exist
                 if (!user) throw new ConflictException('The email does not exist in our database.')
 
                 // Start user session
-                return await this.authService.loginUserWithStrategy(user)
+                return await this.authService.loginUserWithStrategy(user, resToken)
             } else {
                 throw new ConflictException('The email already exists in our database.')
             }
@@ -62,5 +61,11 @@ export class AuthController {
     @Post('/profile')
     async getProfile(@Request() req: any) {
         return await this.oauth2LinkedinService.getProfile(req.user.authStrategy.access_token)
+    }
+
+    @Get('/test')
+    async test() {
+        console.log(await this.authService.test())
+        return 'success'
     }
 }
