@@ -30,6 +30,7 @@ export class AuthController {
     @Post('/oauth2/linkedin')
     async OAuth2Linkedin(@Body() request: AccessTokenDTO) {
         try {
+            // capa de seguridad
             const action = this.oauth2LinkedinService.stateValidate(request.state)
 
             const resToken = await this.oauth2LinkedinService.getAccessToken(request.code)
@@ -40,12 +41,14 @@ export class AuthController {
                 if (user) throw new ConflictException('The email already exists in our database.')
 
                 // Register user
-                const newUser = { name: profile.name, email: profile.email, password: this.authService.passwordGenerate() }
+                const newUser = { name: profile.name, email: profile.email, password: this.authService.passwordGenerate(), useAuthStrategy: 'linkedin' }
                 return await this.authService.registerUserWithStrategy(newUser, resToken)
             } else if (action == 'login') {
-
                 // Verified that the user exist
                 if (!user) throw new ConflictException('The email does not exist in our database.')
+
+                // Verified startegy
+                if (user.useAuthStrategy != 'linkedin') throw new ConflictException('We are sorry, but this linkedin account is not found in our database  ')
 
                 // Start user session
                 return await this.authService.loginUserWithStrategy(user, resToken)

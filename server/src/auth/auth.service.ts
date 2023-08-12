@@ -21,11 +21,11 @@ export class AuthService {
         private jwtService: JwtService) { }
 
     async registerUser(user: RegisterUserDTO) {
-        const { name, email, password } = user;
+        const { name, email, password, useAuthStrategy } = user;
         //Encode Password
         const hashedPassword = await this.encoderService.passwordEncoder(password)
         //created User
-        const NewUser = this.userRepository.create({ name, email, password: hashedPassword })
+        const NewUser = this.userRepository.create({ name, email, password: hashedPassword, useAuthStrategy })
         return this.userRepository.save(NewUser).then((user) => {
             //if all ok return the user
             return user
@@ -83,11 +83,13 @@ export class AuthService {
     }
 
     async loginUserWithStrategy(user: User, strategy: AuthStrategyDTO): Promise<{ accessToken: string }> {
+        // update Strategy
         const { access_token, scope } = strategy
         const date = new Date
         date.setSeconds(strategy.expires_in)
         this.authStrategyRepository.update({ user: user }, { access_token, scope, expires_in: date })
 
+        // return access token
         const payload: JwtPayload = { id: user.id, email: user.email }
         const accessToken = this.jwtService.sign(payload)
         return { accessToken }

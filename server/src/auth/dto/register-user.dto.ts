@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length, IsEmail} from "class-validator"
+import { IsNotEmpty, IsString, Length, IsEmail } from "class-validator"
 
 export class RegisterUserDTO {
     @IsNotEmpty()
@@ -7,7 +7,7 @@ export class RegisterUserDTO {
     name: string
 
     @IsNotEmpty()
-    @IsEmail() 
+    @IsEmail()
     @Length(2, 100)
     email: string
 
@@ -16,6 +16,8 @@ export class RegisterUserDTO {
     @Length(2, 100)
     password: string
 
+    @IsString()
+    useAuthStrategy?: string
     // @IsNotEmpty()
     // @IsString()
     // @Length(2, 100)

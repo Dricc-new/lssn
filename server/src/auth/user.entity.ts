@@ -15,6 +15,9 @@ export class User {
     @Column({ length: 100 })
     password: string
 
+    @Column({ length: 20, nullable: true , name: 'use_auth_strategy'})
+    useAuthStrategy: string
+
     @OneToOne(() => AuthStrategy, (authStrategy) => authStrategy.user)
     authStrategy: AuthStrategy
 }
