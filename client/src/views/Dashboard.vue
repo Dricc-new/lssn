@@ -1,15 +1,18 @@
 <script setup>
+import Header from '../components/Header.vue';
 import AppLayout from '../layout/AppLayout.vue';
-import { useAuthStore } from '../stores/auth.store';
-const auth = useAuthStore()
+import { Session } from '../sessionController';
+const user = Session.User()
 </script>
 <template>
     <AppLayout>
-        <section class="flex flex-col justify-center items-center p-6">
-            <article class="flex flex-col items-center shadow-lg shadow-stone-950 bg-stone-600 p-6 rounded">
-                <img :src="auth.user?.picture" class="border-gradient rounded-full" alt="">
-                <h2><strong>Name : </strong>{{ auth.user?.name }}</h2>
-                <h2><strong>Email : </strong>{{ auth.user?.email }}</h2>
+        <Header class="text-center p-10 text-xl">Hi, How are you {{ user.name }}?</Header>
+        <section class="flex justify-center gap-6">
+            <article v-for="iten in 3" :key="i" class="shadow shadow-slate-500 rounded p-6 bg-white cursor-pointer hover:shadow-lg hover:shadow-slate-600">
+                <Header class="text-lg">Title</Header>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime et adipisci tempore excepturi assumenda
+                    eaque amet. Sunt recusandae expedita aspernatur explicabo illo, tempora reiciendis voluptatem soluta
+                    eligendi repellat tempore pariatur?</p>
             </article>
         </section>
     </AppLayout>

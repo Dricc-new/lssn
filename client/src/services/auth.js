@@ -1,7 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "../stores/auth.store";
-
-const auth = useAuthStore()
+import { Session } from "../sessionController";
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:3000',
@@ -24,5 +22,5 @@ export const Authenticate = async (req) => await axiosInstance.post('/auth/oauth
 })
 
 export const getProfile = async () => await axiosInstance.post('/auth/profile', null, {
-    headers: { Authorization: `Bearer ${auth.accessToken}` }
+    headers: { Authorization: `Bearer ${Session.AccessToken()}` }
 })
