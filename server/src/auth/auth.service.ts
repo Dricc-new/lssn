@@ -76,12 +76,6 @@ export class AuthService {
         }
     }
 
-    async test() {
-        const user = await this.getUser('diegoramoncc17@gmail.com')
-        const auth = await this.authStrategyRepository.findOneBy({ user: user })
-        return auth
-    }
-
     async loginUserWithStrategy(user: User, strategy: AuthStrategyDTO): Promise<{ accessToken: string }> {
         // update Strategy
         const { access_token, scope } = strategy

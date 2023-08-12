@@ -65,10 +65,4 @@ export class AuthController {
     async getProfile(@Request() req: any) {
         return await this.oauth2LinkedinService.getProfile(req.user.authStrategy.access_token)
     }
-
-    @Get('/test')
-    async test() {
-        console.log(await this.authService.test())
-        return 'success'
-    }
 }
