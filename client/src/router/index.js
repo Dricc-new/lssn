@@ -47,14 +47,10 @@ const router = createRouter({
 
 // Middleware
 router.beforeEach(async (to, from) => {
-  if (
-    // make sure the user is authenticated
-    !Session.isAuthenticated() &&
-    // Avoid an infinite redirect
-    to.meta.middleware?.auth
-  ) {
-    // redirect the user to the login page
+  if (!Session.isAuthenticated() && to.meta.middleware?.auth) {
     return { name: 'login' }
+  } else if (Session.isAuthenticated() && ((to.name == 'login' || to.name == 'register'))) {
+    return { name: 'home' }
   }
 })
 
