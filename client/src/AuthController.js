@@ -105,7 +105,7 @@ export class Session {
     static async RefreshToken() {
         try {
             // Pass the request to the API
-            const { accessToken } = (await axios.post('http://localhost:3000/auth/refreshToken', {
+            const { accessToken } = (await axios.post('https://lssn-production.up.railway.app/auth/refreshToken', {
                 accessToken: this.session.getItem('accessToken'),
                 refreshToken: this.session.getItem('refreshToken')
             })).data

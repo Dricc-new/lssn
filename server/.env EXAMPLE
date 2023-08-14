@@ -18,4 +18,4 @@ LINKEDIN_CLIENT_ID=<your_client_id>
 LINKEDIN_CLIENT_SECRET=<your_client_secret>
 LINKEDIN_ACCESS_TOKEN=<your_access_token>
 LINKEDIN_SCOPES=<scope1>%20<scope2>%20<scope...> #for example openid%20profile
-    
+LINKEDIN_CALLBACK=http://localhost:5173/callback

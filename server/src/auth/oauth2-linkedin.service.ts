@@ -48,7 +48,7 @@ export class OAuth2LinkedinService {
                 grant_type: 'authorization_code',
                 client_id: this.env.get('LINKEDIN_CLIENT_ID'),
                 client_secret: this.env.get('LINKEDIN_CLIENT_SECRET'),
-                redirect_uri: 'http://localhost:5173/callback'
+                redirect_uri: this.env.get('LINKEDIN_CALLBACK')
             }, {
                 headers: { 'content-type': 'application/x-www-form-urlencoded' }
             })
