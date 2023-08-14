@@ -1,8 +1,14 @@
 <script setup>
 import Header from '../components/Header.vue';
 import AppLayout from '../layout/AppLayout.vue';
-import { Session } from '../sessionController';
-const user = Session.User()
+import { Session } from '../AuthController';
+import { onMounted, ref } from 'vue';
+
+var user = ref()
+onMounted(async ()=>{
+    user.value = await Session.getProfile()
+})
+
 </script>
 <template>
     <AppLayout>

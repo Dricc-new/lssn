@@ -1,5 +1,5 @@
 <script setup>
-import { redirectLinkedinAuth } from '../services/auth';
+import { redirectLinkedinAuth } from '@/AuthController';
 defineProps({
     action: String
 })

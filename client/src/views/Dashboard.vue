@@ -1,14 +1,14 @@
 <script setup>
 import Header from '../components/Header.vue';
 import AppLayout from '../layout/AppLayout.vue';
-import { Session } from '../sessionController';
+import { Session } from '../AuthController';
 const user = Session.User()
 </script>
 <template>
     <AppLayout>
         <Header class="text-center p-10 text-xl">Hi, How are you {{ user.name }}?</Header>
         <section class="flex max-sm:flex-col justify-center gap-6">
-            <article v-for="iten in 3" :key="i" class="shadow shadow-slate-500 rounded p-6 bg-white cursor-pointer hover:shadow-lg hover:shadow-slate-600">
+            <article v-for="item in 3" :key="item" class="shadow shadow-slate-500 rounded p-6 bg-white cursor-pointer hover:shadow-lg hover:shadow-slate-600">
                 <Header class="text-lg">Title</Header>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime et adipisci tempore excepturi assumenda
                     eaque amet. Sunt recusandae expedita aspernatur explicabo illo, tempora reiciendis voluptatem soluta

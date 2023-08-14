@@ -18,16 +18,55 @@ export class AuthService {
         private encoderService: EncoderService,
         private jwtService: JwtService) { }
 
+    // Create a new token; and returns an access token with your refresh token
+    private async createToken(payload: JwtPayload): Promise<{ accessToken: string, refreshToken: string }> {
+        // Create accessToken
+        const accessToken = this.jwtService.sign(payload)
+        
+        // Create a refreshToken
+        const refreshToken = await this.jwtService.signAsync(payload, {
+            secret: process.env.REFRESH_KEY_SECRET,
+            expiresIn: process.env.REFRESH_KEY_EXPIRE,
+        })
+        return { accessToken, refreshToken }
+    }
+
+    // Refresh accessToken
+    async updateToken(accessToken: string, refreshToken: string): Promise<{ accessToken: string }> {
+        try {
+            // If this token is not expired I return it
+            const payload: { id: string, email: string } = await this.jwtService.verify(accessToken)
+            return { accessToken }
+        } catch{
+            try {
+                // I verify that the refresh token is not expired
+                const { id, email } = await this.jwtService.verifyAsync(refreshToken, {
+                    secret: process.env.REFRESH_KEY_SECRET,
+                })
+
+                // I create a new token and return it
+                const newAccessToken = this.jwtService.sign({ id, email })
+                return { accessToken: newAccessToken }
+            } catch (err) {
+                throw new UnauthorizedException('Your session has expired')
+            }
+        }
+    }
+
     async registerUser(user: RegisterUserDTO) {
         const { name, email, password, useAuthStrategy } = user;
-        //Encode Password
+        
+        // Encode Password
         const hashedPassword = await this.encoderService.passwordEncoder(password)
-        //created User
+        
+        // Create a new User
         const NewUser = this.userRepository.create({ name, email, password: hashedPassword, useAuthStrategy })
         return this.userRepository.save(NewUser).then((user) => {
+           
             //if all ok return the user
             return user
         }).catch((e) => {
+           
             //else return a error
             if (e.code === 'ER_DUP_ENTRY') {
                 throw new ConflictException('The email already exists in our database.')
@@ -36,23 +75,21 @@ export class AuthService {
         })
     }
 
-    async login(loginUser: LoginUserDTO): Promise<{ accessToken: string }> {
+    async login(loginUser: LoginUserDTO): Promise<{ accessToken: string, refreshToken: string }> {
         const { email, password } = loginUser
 
-        //search user by email on database
+        // Search user by email on database
         const user = await this.userRepository.findOneBy({ email: email })
 
-        //if the user exists and the password is correct, return the account; otherwise return an error
+        // If the user exists and the password is correct, return the account; otherwise return an error
         if (user && (await this.encoderService.checkPassword(password, user.password))) {
-            const payload: JwtPayload = { id: user.id, email: user.email }
-            const accessToken = this.jwtService.sign(payload)
-            return { accessToken }
+            return await this.createToken({ id: user.id, email: user.email })
         } else {
             throw new UnauthorizedException('The wrong email or password')
         }
     }
 
-    async registerUserWithStrategy(user: RegisterUserDTO, strategy: AuthStrategyDTO) {
+    async registerUserWithStrategy(user: RegisterUserDTO, strategy: AuthStrategyDTO): Promise<{ accessToken: string, refreshToken: string }> {
         try {
             // register user
             const newUser: User = await this.registerUser(user)
@@ -66,33 +103,30 @@ export class AuthService {
             await this.authStrategyRepository.save(newStrategy)
 
             // return a accessToken
-            const payload: JwtPayload = { id: newUser.id, email: newUser.email }
-            const accessToken = this.jwtService.sign(payload)
-            return { accessToken }
+            return await this.createToken({ id: newUser.id, email: newUser.email })
         } catch (e) {
             throw new InternalServerErrorException()
         }
     }
 
     // Login with linkedin
-    async loginUserWithStrategy(user: User, strategy: AuthStrategyDTO): Promise<{ accessToken: string }> {
+    async loginUserWithStrategy(user: User, strategy: AuthStrategyDTO): Promise<{ accessToken: string, refreshToken: string }> {
         // update Strategy
         const { access_token, scope } = strategy
         const date = new Date
         date.setSeconds(strategy.expires_in)
-        
+
         try {
             await this.authStrategyRepository.update({ user: user }, { access_token, scope, expires_in: date })
         } catch (e) {
             throw new InternalServerErrorException()
         }
 
-        // return access token
-        const payload: JwtPayload = { id: user.id, email: user.email }
-        const accessToken = this.jwtService.sign(payload)
-        return { accessToken }
+        // return tokens
+        return await this.createToken({ id: user.id, email: user.email })
     }
 
+    // Get user by email
     getUser(email: string) {
         return this.userRepository.findOneBy({ email: email })
     }

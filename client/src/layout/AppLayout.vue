@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { Session } from '../sessionController';
+import { Session } from '../AuthController';
 const menuToggle = ref(false)
 const isAuth = ref(Session.isAuthenticated())
 </script>

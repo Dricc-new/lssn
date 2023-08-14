@@ -1,4 +1,9 @@
+#Port Server
+PORT=3000
 KEY_SECRET=super_secret_key
+KEY_EXPIRE="60m"
+REFRESH_KEY_SECRET=refresh_super_secret_key
+REFRESH_KEY_EXPIRE='7d'
 
 #DB configuration
 DB_TYPE=mysql
