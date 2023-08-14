@@ -1,5 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { Session } from '../AuthController'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
+import Dashboard from '../views/Dashboard.vue'
+import Profile from '../views/Profile.vue'
+import Callback from '../views/callback.vue'
+import Erro500 from '../views/500.vue'
+import Erro404 from '../views/404.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,40 +15,40 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: import('../views/HomeView.vue')
+      component: HomeView
     }, {
       path: '/login',
       name: 'login',
-      component: import('../views/LoginView.vue')
+      component: LoginView
     }, {
       path: '/register',
       name: 'register',
-      component: import('../views/RegisterView.vue')
+      component: RegisterView
     }, {
       path: '/dashboard',
       name: 'dashboard',
-      component: import('../views/Dashboard.vue'),
+      component: Dashboard,
       meta: { middleware: { auth: true } }
     }, {
       path: '/profile',
       name: 'profile',
-      component: import('../views/Profile.vue'),
+      component: Profile,
       meta: { middleware: { auth: true } }
     }, {
       path: '/callback',
       name: 'callback',
-      component: import('../views/callback.vue')
+      component: Callback
     }, {
       path: '/500',
       name: '500',
-      component: import('../views/500.vue')
+      component: Erro500
     }, {
       path: '/404',
       name: '404',
-      component: import('../views/404.vue')
+      component: Erro404
     }, {
       path: '/:pathMatch(.*)*',
-      component: import('../views/404.vue')
+      component: Erro404
     }
   ]
 })
