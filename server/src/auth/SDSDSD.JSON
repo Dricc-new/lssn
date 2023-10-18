@@ -1,0 +1,59 @@
+{
+    "lang": "es",
+    "scopes": [
+        "company:delete",
+        "company:read",
+        "company:write",
+        "user:read",
+        "user:write",
+        "user:delete",
+        "user:me",
+        "social-media:read",
+        "post:delete",
+        "post:read",
+        "post:write",
+        "account:write",
+        "account:read",
+        "unsplash:write",
+        "unsplash:read",
+        "unsplash:delete",
+        "social-media-config:read",
+        "social-media-config:write",
+        "social-media-config:delete"
+    ],
+    "isManager": true,
+    "roles": [
+        "COMPANY_USER"
+    ],
+    "isActive": true,
+    "company": {
+        "blacklistTemplate": [],
+        "companyBrands": null,
+        "users": [
+            "64df71938deeef4b683c84f5"
+        ],
+        "_id": "64df71938deeef4b683c84f4",
+        "email": "dricctest@gmail.com",
+        "name": "Idraw",
+        "companyType": "education",
+        "isActive": false,
+        "createdAt": "2023-08-18T13: 26: 43.569Z",
+        "updatedAt": "2023-08-18T13: 26: 43.638Z",
+        "__v": 0,
+        "manager": {
+            "_id": "64df71938deeef4b683c84f5",
+            "email": "dricctest@gmail.com",
+            "name": "Diegog",
+            "lastName": "Cabrerag Cruzg"
+        }
+    },
+    "email": "dricctest@gmail.com",
+    "name": "Diegog",
+    "lastName": "Cabrerag Cruzg",
+    "__v": 0,
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGRmNzE5MzhkZWVlZjRiNjgzYzg0ZjUiLCJpYXQiOjE2OTIzNjUyNTUsImV4cCI6MTY5NDk5MzI1NX0.x8GS88Jh1b-EWwUsvyV57az5Qh9QZJUKOkHaBRi-nZo",
+    "id": "64df71938deeef4b683c84f5",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRyaWNjdGVzdEBnbWFpbC5jb20iLCJzdWIiOiI2NGRmNzE5MzhkZWVlZjRiNjgzYzg0ZjUiLCJjb21wYW55SWQiOiI2NGRmNzE5MzhkZWVlZjRiNjgzYzg0ZjQiLCJyb2xlcyI6WyJDT01QQU5ZX1VTRVIiXSwiY29tcGFueU5hbWUiOiJJZHJhdyIsInNjb3BlcyI6WyJjb21wYW55OmRlbGV0ZSIsImNvbXBhbnk6cmVhZCIsImNvbXBhbnk6d3JpdGUiLCJ1c2VyOnJlYWQiLCJ1c2VyOndyaXRlIiwidXNlcjpkZWxldGUiLCJ1c2VyOm1lIiwic29jaWFsLW1lZGlhOnJlYWQiLCJwb3N0OmRlbGV0ZSIsInBvc3Q6cmVhZCIsInBvc3Q6d3JpdGUiLCJhY2NvdW50OndyaXRlIiwiYWNjb3VudDpyZWFkIiwidW5zcGxhc2g6d3JpdGUiLCJ1bnNwbGFzaDpyZWFkIiwidW5zcGxhc2g6ZGVsZXRlIiwic29jaWFsLW1lZGlhLWNvbmZpZzpyZWFkIiwic29jaWFsLW1lZGlhLWNvbmZpZzp3cml0ZSIsInNvY2lhbC1tZWRpYS1jb25maWc6ZGVsZXRlIl0sImxhbmciOiJlcyIsIl9pZCI6IjY0ZGY3MTkzOGRlZWVmNGI2ODNjODRmNSIsImlhdCI6MTY5MjkxOTU1NywiZXhwIjoxNjkyOTIzMTU3fQ.9rXsA6FjZybpb2nDTyHpJvE0i-43yTsFjf2mlPRGFnk",
+    "expireAfter": 3600,
+    "exp_stamp": 1692923157195
+}

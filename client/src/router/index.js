@@ -10,6 +10,7 @@ import Erro500 from '../views/500.vue'
 import Erro404 from '../views/404.vue'
 
 const router = createRouter({
+  base: 'https://appemps.000webhostapp.com/',
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
